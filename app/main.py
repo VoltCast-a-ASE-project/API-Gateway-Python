@@ -25,9 +25,29 @@ ROUTES = {
     "alert": "http://localhost:8087"
 }
 
+EXCLUDED_ROUTES = ["/api/v1/auth/register", "/api/v1/auth/login"]
+
 @app.on_event("startup")
 def setup():
     db.setup_db()
+
+
+@app.middleware("http")
+async def check_jwt(request: Request, call_next):
+    if request.url.path in EXCLUDED_ROUTES:
+        return await call_next(request)
+
+    bearer_token = request.headers.get("Authorization")
+    token = bearer_token.split(" ")[1]
+
+    if token is None:
+        return Response("Bad request: Token missing", status_code=400)
+
+    if not JwtService.verify_jwt(token):
+        return Response("Unauthorized: Invalid Token", status_code=401)
+
+    response = await call_next(request)
+    return response
 
 @app.post("/api/v1/auth/register")
 async def register(payload: Request):
@@ -59,9 +79,9 @@ async def login(payload: Request):
     if not PasswordService.verify_password(password, hashed_password):
         return Response("Unauthorized: Wrong credentials", status_code=401)
 
-    jwt = JwtService.create_jwt(username)
+    token = JwtService.create_jwt(username)
 
-    return Response(f"JWT: {jwt}", status_code=201)
+    return Response(f"JWT: {token}", status_code=201)
 
 
 
@@ -76,14 +96,17 @@ async def route(vendor: str, path: str, request: Request):
     headers = dict(request.headers)
     headers.pop("host", None)
 
-    async with httpx.AsyncClient(timeout=10.0) as client:
-        resp = await client.request(
-            method=request.method,
-            url=url,
-            params=request.query_params,
-            content=await request.body(),
-            headers=headers,
-        )
+    try:
+        async with httpx.AsyncClient(timeout=10.0) as client:
+            resp = await client.request(
+                method=request.method,
+                url=url,
+                params=request.query_params,
+                content=await request.body(),
+                headers=headers,
+            )
+    except Exception:
+        return Response("Not found: Microservice not reachable", status_code=404)
 
     return Response(content=resp.content, status_code=resp.status_code, headers=dict(resp.headers))
 
