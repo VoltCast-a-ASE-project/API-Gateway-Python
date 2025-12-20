@@ -1,5 +1,7 @@
-from fastapi import FastAPI, Request, Response
 import httpx
+
+from fastapi import FastAPI, Request, Response
+from app.Database import Database
 
 app = FastAPI()
 
@@ -12,6 +14,11 @@ ROUTES = {
     "weatherservice": "http://localhost:8086",
     "alert": "http://localhost:8087"
 }
+
+@app.on_event("startup")
+def setup():
+    db = Database()
+    db.setup_db()
 
 @app.api_route("/{vendor}/{path:path}", methods=["GET", "POST", "PUT", "DELETE", "PATCH"])
 async def route(vendor: str, path: str, request: Request):
