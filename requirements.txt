@@ -1,5 +1,5 @@
 fastapi
-jwt
+pyjwt
 pwdlib
 pwdlib[argon2]
 pydantic

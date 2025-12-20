@@ -4,12 +4,14 @@ from fastapi import FastAPI, Request, Response
 from app.Database import Database
 from pydantic import BaseModel
 
+from app.JwtService import JwtService
 from app.PasswordService import PasswordService
 
 
 class User(BaseModel):
     username: str
-    hashed_password: str
+    password: str
+
 app = FastAPI()
 db = Database()
 
@@ -28,7 +30,7 @@ def setup():
     db.setup_db()
 
 @app.post("/api/v1/auth/register")
-async def register(payload: Request, response: Response):
+async def register(payload: Request):
     body =  await payload.json()
 
     username = body["username"]
@@ -41,6 +43,26 @@ async def register(payload: Request, response: Response):
         return Response("Conflict: Email already in use", status_code=409)
 
     return Response("Created: User", status_code=201)
+
+
+
+@app.post("/api/v1/auth/login")
+async def login(payload: Request):
+    body =  await payload.json()
+
+    username = body["username"]
+    password = body["password"]
+
+    db_response = db.get_user_password(username)
+    hashed_password = db_response[0][0]
+
+    if not PasswordService.verify_password(password, hashed_password):
+        return Response("Unauthorized: Wrong credentials", status_code=401)
+
+    jwt = JwtService.create_jwt(username)
+
+    return Response(f"JWT: {jwt}", status_code=201)
+
 
 
 @app.api_route("/{vendor}/{path:path}", methods=["GET", "POST", "PUT", "DELETE", "PATCH"])
