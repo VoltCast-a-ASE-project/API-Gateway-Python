@@ -53,7 +53,7 @@ async def check_jwt(request: Request, call_next):
 async def register(request: Request):
     body =  await request.json()
 
-    username = body["username"]
+    username = body["email"]
     password = body["password"]
 
     hashed_password = PasswordService.create_password_hash(password)
@@ -70,7 +70,7 @@ async def register(request: Request):
 async def login(request: Request):
     body =  await request.json()
 
-    username = body["username"]
+    username = body["email"]
     password = body["password"]
 
     db_response = db.get_user_password(username)
