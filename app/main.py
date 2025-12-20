@@ -50,8 +50,8 @@ async def check_jwt(request: Request, call_next):
     return response
 
 @app.post("/api/v1/auth/register")
-async def register(payload: Request):
-    body =  await payload.json()
+async def register(request: Request):
+    body =  await request.json()
 
     username = body["username"]
     password = body["password"]
@@ -67,8 +67,8 @@ async def register(payload: Request):
 
 
 @app.post("/api/v1/auth/login")
-async def login(payload: Request):
-    body =  await payload.json()
+async def login(request: Request):
+    body =  await request.json()
 
     username = body["username"]
     password = body["password"]
@@ -82,6 +82,15 @@ async def login(payload: Request):
     token = JwtService.create_jwt(username)
 
     return Response(f"JWT: {token}", status_code=201)
+
+
+
+@app.post("/api/v1/add/microservice")
+async def add_microservice(request: Request):
+    body = await request.json()
+    if not db.write_microservice_data(body):
+        return Response("Internal Server Error: Microservice data could not be written to database", status_code=500)
+    return Response("Wrote microservice data to database", status_code=200)
 
 
 
