@@ -10,7 +10,7 @@ from app.PasswordService import PasswordService
 
 class User(BaseModel):
     username: str
-    password: str
+    hashed_password: str
 
 app = FastAPI()
 db = Database()
@@ -62,7 +62,14 @@ async def register(request: Request):
     if not db.write_user_data(user):
         return Response("Conflict: Email already in use", status_code=409)
 
-    return Response("Created: User", status_code=201)
+    token = JwtService.create_jwt(username)
+
+    return {
+        "data": {
+            "token": token,
+            "token_type": "bearer"},
+        "message": "Success"
+    }
 
 
 
@@ -81,7 +88,12 @@ async def login(request: Request):
 
     token = JwtService.create_jwt(username)
 
-    return Response(f"JWT: {token}", status_code=201)
+    return {
+        "data":{
+            "token": token,
+            "token_type": "bearer"},
+        "message": "Success"
+        }
 
 
 
@@ -94,7 +106,7 @@ async def add_microservice(request: Request):
 
 
 
-@app.api_route("/{vendor}/{path:path}", methods=["GET", "POST", "PUT", "DELETE", "PATCH"])
+@app.api_route("/api/v1/{vendor}/{path:path}", methods=["GET", "POST", "PUT", "DELETE", "PATCH"])
 async def route(vendor: str, path: str, request: Request):
     target = ROUTES.get(vendor)
     if not target:
