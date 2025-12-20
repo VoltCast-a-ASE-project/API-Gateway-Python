@@ -2,8 +2,16 @@ import httpx
 
 from fastapi import FastAPI, Request, Response
 from app.Database import Database
+from pydantic import BaseModel
 
+from app.PasswordService import PasswordService
+
+
+class User(BaseModel):
+    username: str
+    hashed_password: str
 app = FastAPI()
+db = Database()
 
 ROUTES = {
     "fronius": "http://localhost:8081",
@@ -17,8 +25,23 @@ ROUTES = {
 
 @app.on_event("startup")
 def setup():
-    db = Database()
     db.setup_db()
+
+@app.post("/api/v1/auth/register")
+async def register(payload: Request, response: Response):
+    body =  await payload.json()
+
+    username = body["username"]
+    password = body["password"]
+
+    hashed_password = PasswordService.create_password_hash(password)
+    user = User(username=username, hashed_password=hashed_password)
+
+    if not db.write_user_data(user):
+        return Response("Conflict: Email already in use", status_code=409)
+
+    return Response("Created: User", status_code=201)
+
 
 @app.api_route("/{vendor}/{path:path}", methods=["GET", "POST", "PUT", "DELETE", "PATCH"])
 async def route(vendor: str, path: str, request: Request):

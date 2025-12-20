@@ -1,4 +1,6 @@
 import _sqlite3
+from sqlite3 import DatabaseError
+
 
 class Database:
 
@@ -32,37 +34,21 @@ class Database:
         con.commit()
         con.close()
 
-    def write_user_data(self, user):
+    def write_user_data(self, user) -> bool:
         con = self.establish_con("VoltCastDB")
         cur = con.cursor()
 
-        # timestamp = realtime_data["realtime_data"]["current_generation"]["timestamp"]
-        # unit = realtime_data["realtime_data"]["current_generation"]["unit"]
-        # value = realtime_data["realtime_data"]["current_generation"]["value"]
-        #
-        # cur.execute('''INSERT INTO current_energy (timestamp, unit, energy)
-        #                VALUES (?, ?, ?)''',
-        #             (timestamp, unit, value))
-        # con.commit()
-        #
-        # timestamp = realtime_data["realtime_data"]["current_consumption"]["timestamp"]
-        # unit = realtime_data["realtime_data"]["current_consumption"]["unit"]
-        # value = realtime_data["realtime_data"]["current_consumption"]["value"]
-        #
-        # cur.execute('''INSERT INTO current_consumption (timestamp, unit, energy)
-        #                VALUES (?, ?, ?)''',
-        #             (timestamp, unit, value))
-        # con.commit()
-        #
-        # timestamp = realtime_data["realtime_data"]["battery_capacity"]["timestamp"]
-        # unit = realtime_data["realtime_data"]["battery_capacity"]["unit"]
-        # value = realtime_data["realtime_data"]["battery_capacity"]["value"]
+        try:
+            cur.execute('''INSERT INTO user (username, password)
+                           VALUES (?, ?)''',
+                        (user.username, user.hashed_password))
+            con.commit()
+        except DatabaseError:
+            return False
+        finally:
+            con.close()
 
-        # cur.execute('''INSERT INTO battery_capacity (timestamp, unit, energy)
-        #                VALUES (?, ?, ?)''',
-        #             (timestamp, unit, value))
-        con.commit()
-        con.close()
+        return True
 
         def write_microservice_data(self, microservice):
             con = self.establish_con("VoltCast_DB")
