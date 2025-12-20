@@ -3,3 +3,5 @@ jwt
 pwdlib
 pydantic
 typing
+uvicorn
+httpx
