@@ -1,6 +1,7 @@
 fastapi
 jwt
 pwdlib
+pwdlib[argon2]
 pydantic
 typing
 uvicorn
