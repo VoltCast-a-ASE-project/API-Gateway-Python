@@ -50,6 +50,24 @@ class Database:
 
         return True
 
+
+    def get_user_password(self, username: str):
+        con = self.establish_con("VoltCastDB")
+        cur = con.cursor()
+        print(username)
+
+        cur.execute(
+            "SELECT password FROM user WHERE username = ?",
+            (username,)
+        )
+        response = cur.fetchall()
+
+        con.commit()
+        con.close()
+
+        return response
+
+
         def write_microservice_data(self, microservice):
             con = self.establish_con("VoltCast_DB")
             cur = con.cursor()
