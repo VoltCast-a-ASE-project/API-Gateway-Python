@@ -34,11 +34,4 @@ async def route(vendor: str, path: str, request: Request):
         )
 
     return Response(content=resp.content, status_code=resp.status_code, headers=dict(resp.headers))
-@app.get("/")
-async def root():
-    return {"message": "Hello World"}
 
-
-@app.get("/hello/{name}")
-async def say_hello(name: str):
-    return {"message": f"Hello {name}"}
