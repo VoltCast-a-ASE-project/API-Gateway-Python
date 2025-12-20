@@ -68,34 +68,22 @@ class Database:
         return response
 
 
-        def write_microservice_data(self, microservice):
-            con = self.establish_con("VoltCast_DB")
-            cur = con.cursor()
+    def write_microservice_data(self, microservice) -> bool:
+        name = microservice["name"]
+        ip_address = microservice["ip_address"]
+        port = microservice["port"]
+        username = microservice["username"]
 
-            # timestamp = realtime_data["realtime_data"]["current_generation"]["timestamp"]
-            # unit = realtime_data["realtime_data"]["current_generation"]["unit"]
-            # value = realtime_data["realtime_data"]["current_generation"]["value"]
-            #
-            # cur.execute('''INSERT INTO current_energy (timestamp, unit, energy)
-            #                VALUES (?, ?, ?)''',
-            #             (timestamp, unit, value))
-            # con.commit()
-            #
-            # timestamp = realtime_data["realtime_data"]["current_consumption"]["timestamp"]
-            # unit = realtime_data["realtime_data"]["current_consumption"]["unit"]
-            # value = realtime_data["realtime_data"]["current_consumption"]["value"]
-            #
-            # cur.execute('''INSERT INTO current_consumption (timestamp, unit, energy)
-            #                VALUES (?, ?, ?)''',
-            #             (timestamp, unit, value))
-            # con.commit()
-            #
-            # timestamp = realtime_data["realtime_data"]["battery_capacity"]["timestamp"]
-            # unit = realtime_data["realtime_data"]["battery_capacity"]["unit"]
-            # value = realtime_data["realtime_data"]["battery_capacity"]["value"]
-            #
-            # cur.execute('''INSERT INTO battery_capacity (timestamp, unit, energy)
-            #                VALUES (?, ?, ?)''',
-            #             (timestamp, unit, value))
+        con = self.establish_con("VoltCast_DB")
+        cur = con.cursor()
+
+        try:
+            cur.execute('''INSERT INTO microservices (name, ip_address, port, username)
+                           VALUES (?, ?, ?, ?)''',
+                        (name, ip_address, port, username))
             con.commit()
+        except DatabaseError:
+            return False
+        finally:
             con.close()
+        return True
