@@ -1,0 +1,9 @@
+fastapi
+jwt
+pwdlib
+pydantic
+typing
+uvicorn
+httpx
+pytest
+pytest-cov
