@@ -1,6 +1,3 @@
-import json
-from sys import orig_argv
-
 import httpx
 
 from fastapi import FastAPI, Request, Response
@@ -15,9 +12,6 @@ class User(BaseModel):
     username: str
     password: str
 
-
-class UserInDB(User):
-    hashed_password: str
 app = FastAPI()
 db = Database()
 
@@ -36,7 +30,7 @@ def setup():
     db.setup_db()
 
 @app.post("/api/v1/auth/register")
-async def register(payload: Request, response: Response):
+async def register(payload: Request):
     body =  await payload.json()
 
     username = body["username"]
@@ -50,38 +44,24 @@ async def register(payload: Request, response: Response):
 
     return Response("Created: User", status_code=201)
 
+
+
 @app.post("/api/v1/auth/login")
-async def login(payload: Request, response: Response):
+async def login(payload: Request):
     body =  await payload.json()
 
     username = body["username"]
     password = body["password"]
 
-    user = User(username=username, password=password)
-
     db_response = db.get_user_password(username)
-    value = ' '.join(db_response[0])
-    print(value)
+    hashed_password = db_response[0][0]
 
-    test_e = {
-        "hashed_password": value
-    }
-    return UserInDB(**test_e)
-    # hashed_password = db_response[0].split('p=')[1]
-    #
-    #
-    # print(password)
-    # print(hashed_password)
-    #
-    #
-    #
-    # if not PasswordService.verify_password(password, hashed_password):
-    #     return Response("Unauthorized: Wrong password", status_code=401)
-    #
-    # jwt = JwtService.create_jwt(username)
-    #
-    # return Response(f"JWT: {jwt}", status_code=201)
+    if not PasswordService.verify_password(password, hashed_password):
+        return Response("Unauthorized: Wrong credentials", status_code=401)
 
+    jwt = JwtService.create_jwt(username)
+
+    return Response(f"JWT: {jwt}", status_code=201)
 
 
 
