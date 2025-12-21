@@ -21,17 +21,6 @@ class Database:
                         password TEXT);
                     ''')
         con.commit()
-
-        cur.execute('''
-                    CREATE TABLE IF NOT EXISTS microservices(
-                        id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-                        name TEXT NOT NULL,
-                        ip_address TEXT,
-                        port INTEGER,
-                        username TEXT,
-                        FOREIGN KEY(username) REFERENCES user(username));
-                    ''')
-        con.commit()
         con.close()
 
     def write_user_data(self, user) -> bool:
@@ -66,24 +55,3 @@ class Database:
         con.close()
 
         return response
-
-
-    def write_microservice_data(self, microservice) -> bool:
-        name = microservice["name"]
-        ip_address = microservice["ip_address"]
-        port = microservice["port"]
-        username = microservice["username"]
-
-        con = self.establish_con("VoltCast_DB")
-        cur = con.cursor()
-
-        try:
-            cur.execute('''INSERT INTO microservices (name, ip_address, port, username)
-                           VALUES (?, ?, ?, ?)''',
-                        (name, ip_address, port, username))
-            con.commit()
-        except DatabaseError:
-            return False
-        finally:
-            con.close()
-        return True

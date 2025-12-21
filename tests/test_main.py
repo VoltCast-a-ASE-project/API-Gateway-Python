@@ -124,31 +124,3 @@ def test_invalid_token(client, monkeypatch):
     )
 
     assert res.status_code == 401
-
-
-def test_add_microservice_success(client, monkeypatch):
-    monkeypatch.setattr(main_module, "db", DummyDB())
-    monkeypatch.setattr(main_module.JwtService, "verify_jwt", lambda t: True)
-
-    res = client.post(
-        "/api/v1/add/microservice",
-        json={"name": "x", "url": "http://x"},
-        headers={"Authorization": "Bearer ok"},
-    )
-
-    assert res.status_code == 200
-
-
-def test_add_microservice_db_write_fail(client, monkeypatch):
-    db = DummyDB()
-    db.write_microservice_data = lambda body: False
-    monkeypatch.setattr(main_module, "db", db)
-    monkeypatch.setattr(main_module.JwtService, "verify_jwt", lambda t: True)
-
-    res = client.post(
-        "/api/v1/add/microservice",
-        json={"name": "x", "url": "http://x"},
-        headers={"Authorization": "Bearer ok"},
-    )
-
-    assert res.status_code == 500

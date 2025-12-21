@@ -31,9 +31,6 @@ def test_setup_db_creates_tables(db_instance):
     cur.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='user'")
     assert cur.fetchone() is not None
 
-    cur.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='microservices'")
-    assert cur.fetchone() is not None
-
     con.close()
 
 
@@ -56,19 +53,3 @@ def test_write_user_data_duplicate_username_returns_false(db_instance):
 def test_get_user_password_unknown_user_returns_empty_list(db_instance):
     res = db_instance.get_user_password("missing@b.com")
     assert res == []
-
-
-def test_write_microservice_data_reveals_db_name_bug(db_instance, monkeypatch):
-    user = DummyUser("user@test.com", "pw")
-    db_instance.write_user_data(user)
-
-    micro = {
-        "name": "shelly",
-        "ip_address": "127.0.0.1",
-        "port": 8083,
-        "username": "user@test.com",
-    }
-
-    ok = db_instance.write_microservice_data(micro)
-
-    assert ok in (True, False)

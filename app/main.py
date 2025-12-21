@@ -118,15 +118,6 @@ async def login(request: Request):
 
 
 
-@app.post("/api/v1/add/microservice")
-async def add_microservice(request: Request):
-    body = await request.json()
-    if not db.write_microservice_data(body):
-        return Response("Internal Server Error: Microservice data could not be written to database", status_code=500)
-    return Response("Wrote microservice data to database", status_code=200)
-
-
-
 @app.api_route("/api/v1/{vendor}/{path:path}", methods=["GET", "POST", "PUT", "DELETE", "PATCH"])
 async def route(vendor: str, path: str, request: Request):
     target = ROUTES.get(vendor)
