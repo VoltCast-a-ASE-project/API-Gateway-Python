@@ -1,0 +1,11 @@
+services:
+  api-gateway:
+    build: .
+    image: api-gateway
+    ports:
+      - "22200:22200"
+    environment:
+      DB_NAME: ""
+      ACCESS_TOKEN_EXPIRE_MINUTES: 0
+      JWT_SECRET: ""
+      ALGORITHM: ""
