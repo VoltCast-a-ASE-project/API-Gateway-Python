@@ -3,6 +3,7 @@ import httpx
 from fastapi import FastAPI, Request, Response
 from app.Database import Database
 from pydantic import BaseModel
+from fastapi.middleware.cors import CORSMiddleware
 
 from app.JwtService import JwtService
 from app.PasswordService import PasswordService
@@ -24,6 +25,16 @@ ROUTES = {
     "weatherservice": "http://localhost:8086",
     "alert": "http://localhost:8087"
 }
+origins = [
+    "http://localhost:4200",
+]
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 EXCLUDED_ROUTES = ["/api/v1/auth/register", "/api/v1/auth/login"]
 
@@ -34,6 +45,10 @@ def setup():
 
 @app.middleware("http")
 async def check_jwt(request: Request, call_next):
+
+    if request.method == "OPTIONS":
+        return await call_next(request)
+
     if request.url.path in EXCLUDED_ROUTES:
         return await call_next(request)
 
