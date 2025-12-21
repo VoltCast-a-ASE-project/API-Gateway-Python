@@ -53,6 +53,9 @@ async def check_jwt(request: Request, call_next):
         return await call_next(request)
 
     bearer_token = request.headers.get("Authorization")
+    if not bearer_token:
+        return Response("Bad request: Token missing", status_code=400)
+
     token = bearer_token.split(" ")[1]
 
     if token is None:
@@ -96,6 +99,9 @@ async def login(request: Request):
     password = body["password"]
 
     db_response = db.get_user_password(username)
+    if not db_response or not db_response[0] or not db_response[0][0]:
+        return Response("Unauthorized: Wrong credentials", status_code=401)
+
     hashed_password = db_response[0][0]
 
     if not PasswordService.verify_password(password, hashed_password):
