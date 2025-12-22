@@ -2,10 +2,18 @@ services:
   api-gateway:
     build: .
     image: api-gateway
+    networks:
+      - VoltCast_Network
     ports:
       - "22200:22200"
+    expose:
+      - "22200"
     environment:
       DB_NAME: ""
       ACCESS_TOKEN_EXPIRE_MINUTES: 0
       JWT_SECRET: ""
       ALGORITHM: ""
+
+networks:
+  VoltCast_Network:
+    external: true
