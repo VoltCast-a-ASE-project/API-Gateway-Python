@@ -1,7 +1,7 @@
 services:
   api-gateway:
     build: .
-    image: api-gateway
+    image: ghcr.io/voltcast-a-ase-project/api-gateway-python/api-gateway:latest
     networks:
       - VoltCast_Network
     ports:
