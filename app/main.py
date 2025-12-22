@@ -17,13 +17,13 @@ app = FastAPI()
 db = Database()
 
 ROUTES = {
-    "fronius": "http://localhost:8081",
-    "kostal": "http://localhost:8082",
-    "shelly": "http://localhost:8083",
-    "forecasting": "http://localhost:8084",
-    "newsfeed": "http://localhost:8085",
-    "weatherservice": "http://localhost:8086",
-    "alert": "http://localhost:8087"
+    "fronius": "http://fronius-ms:8081",
+    "kostal": "http://kostal-ms:8082",
+    "shelly": "http://shelly-ms:8083",
+    "forecasting": "http://forecasting-ms:8084",
+    "newsfeed": "http://newsfeed-ms:8085",
+    "weatherservice": "http://weatherservice-ms:8086",
+    "alert": "http://alert-ms:8087"
 }
 origins = [
     "http://localhost:4200",
