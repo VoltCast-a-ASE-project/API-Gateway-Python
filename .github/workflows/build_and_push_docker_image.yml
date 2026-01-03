@@ -58,7 +58,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-
       - name: Pull and run Container
         env:
           DB_NAME: ${{ secrets.DB_NAME }}
