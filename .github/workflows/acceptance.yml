@@ -23,10 +23,11 @@ jobs:
             ghcr.io/voltcast-a-ase-project/api-gateway-python/api-gateway:latest
 
           docker run -d --name fronius-ms -p 8081:8081 \
-            -e MOCKING_ENABLED=true 
+            -e MOCKING_ENABLED=true \
             ghcr.io/voltcast-a-ase-project/fronius-microservice/fronius-ms:latest
           
-          docker run -d --name kostal-ms -p 8082:8082 ghcr.io/voltcast-a-ase-project/kostal-microservice/kostal-ms:latest
+          docker run -d --name kostal-ms -p 8082:8082 \
+            ghcr.io/voltcast-a-ase-project/kostal-microservice/kostal-ms:latest
 
       - name: Install Python, Java Runtime and Taurus
         run: |
