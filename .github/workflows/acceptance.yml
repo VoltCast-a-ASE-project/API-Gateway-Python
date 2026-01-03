@@ -15,8 +15,17 @@ jobs:
 
       - name: Pull and run Container
         run: |
-          docker run -d --name api-gateway-ms -p 22200:22200 -e DB_NAME=${{ secrets.DB_NAME }} -e ACCESS_TOKEN_EXPIRE_MINUTES=${{ secrets.ACCESS_TOKEN_EXPIRE_MINUTES }} -e JWT_SECRET=${{ secrets.JWT_SECRET }} -e ALGORITHM=${{ secrets.ALGORITHM }} ghcr.io/voltcast-a-ase-project/api-gateway-python/api-gateway:latest
-          docker run -d --name fronius-ms -p 8081:8081 -e MOCKING_ENABLED=true ghcr.io/voltcast-a-ase-project/fronius-microservice/fronius-ms:latest
+          docker run -d --name api-gateway-ms -p 22200:22200 \
+            -e "DB_NAME=${{ secrets.DB_NAME }}" \
+            -e "ACCESS_TOKEN_EXPIRE_MINUTES=${{ secrets.ACCESS_TOKEN_EXPIRE_MINUTES }}" \
+            -e "JWT_SECRET=${{ secrets.JWT_SECRET }}" \
+            -e "ALGORITHM=${{ secrets.ALGORITHM }}" \
+            ghcr.io/voltcast-a-ase-project/api-gateway-python/api-gateway:latest
+
+          docker run -d --name fronius-ms -p 8081:8081 \
+            -e MOCKING_ENABLED=true 
+            ghcr.io/voltcast-a-ase-project/fronius-microservice/fronius-ms:latest
+          
           docker run -d --name kostal-ms -p 8082:8082 ghcr.io/voltcast-a-ase-project/kostal-microservice/kostal-ms:latest
 
       - name: Install Python, Java Runtime and Taurus
