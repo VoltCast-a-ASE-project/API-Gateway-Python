@@ -40,13 +40,13 @@ jobs:
           docker run -d --name alerting-ms -p 8087:8087 \
             docker pull ghcr.io/voltcast-a-ase-project/alerting_service/alert-ms:latest
           
-          docker run -d --name forecasting-ms -p 8084:8084 \
+          #docker run -d --name forecasting-ms -p 8084:8084 \
             #TODO: PUT YOUR DOCKER FILE HERE
                     
-          docker run -d --name newsfeed-ms -p 8085:8085 \
+          #docker run -d --name newsfeed-ms -p 8085:8085 \
             #TODO: PUT YOUR DOCKER FILE HERE
           
-          docker run -d --name weatherservice-ms -p 8086:8086 \
+          #docker run -d --name weatherservice-ms -p 8086:8086 \
             #TODO: PUT YOUR DOCKER FILE HERE
 
           
