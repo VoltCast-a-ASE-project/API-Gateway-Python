@@ -1,0 +1,50 @@
+name: Acceptance
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [opened, synchronize, reopened]
+jobs:
+
+  Acceptance-Tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Pull and run Container
+        env:
+          DB_NAME: ${{ secrets.DB_NAME }}
+          ACCESS_TOKEN_EXPIRE_MINUTES: ${{ secrets.ACCESS_TOKEN_EXPIRE_MINUTES }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          ALGORITHM: ${{ secrets.ALGORITHM }}
+        run: |
+          docker run -d --name api-gateway-ms -p 22200:22200 \
+            -e "DB_NAME=$DB_NAME" \
+            -e "ACCESS_TOKEN_EXPIRE_MINUTES=$ACCESS_TOKEN_EXPIRE_MINUTES" \
+            -e "JWT_SECRET=$JWT_SECRET" \
+            -e "ALGORITHM=$ALGORITHM" \
+            ghcr.io/voltcast-a-ase-project/api-gateway-python/api-gateway:latest
+
+          docker run -d --name fronius-ms -p 8081:8081 \
+            -e MOCKING_ENABLED=true \
+            ghcr.io/voltcast-a-ase-project/fronius-microservice/fronius-ms:latest
+          
+          docker run -d --name kostal-ms -p 8082:8082 \
+            ghcr.io/voltcast-a-ase-project/kostal-microservice/kostal-ms:latest
+
+      - name: Install Python, Java Runtime and Taurus
+        run: |
+          sudo apt-get update
+          sudo apt-get install python3 default-jre-headless python3-tk python3-dev libxml2-dev libxslt-dev zlib1g-dev net-tools
+          python -m venv .venv
+          source .venv/bin/activate
+          python -m pip install --upgrade pip
+          pip install bzt
+
+      - name: Run Acceptance Tests
+        run: |
+          source .venv/bin/activate
+          bzt acceptance_tests.jmx
+
