@@ -1,4 +1,4 @@
-name: Build and push docker image to GitHub registry and run acceptance and performance tests
+name: Docker image and acceptance and performance tests
 on:
   push:
     branches:
