@@ -55,8 +55,8 @@ jobs:
   acceptance-test:
     runs-on: ubuntu-latest
     needs: build-and-push
-
     steps:
+      - uses: actions/checkout@v4
       - name: Pull and run Container
         env:
           DB_NAME: ${{ secrets.DB_NAME }}
