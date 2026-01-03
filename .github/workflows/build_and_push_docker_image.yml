@@ -1,4 +1,4 @@
-name: Build and push docker image to GitHub registry
+name: Build and push docker image to GitHub registry, run acceptance and performance tests
 on:
   push:
     branches:
@@ -10,6 +10,7 @@ env:
   COMPOSE_FILE: docker-compose.yml
 
 jobs:
+  # Job builds docker image and pushes it to GHCR
   build-and-push:
     name: Build and push docker image to Github registry
     runs-on: ubuntu-latest
@@ -48,3 +49,86 @@ jobs:
           # Build and push each service defined in docker-compose.yml
           docker compose -f ${{ env.COMPOSE_FILE }} build
           docker compose -f ${{ env.COMPOSE_FILE }} push
+
+
+  # Job runs acceptance tests
+  acceptance-test:
+    runs-on: ubuntu-latest
+    needs: build-and-push
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Pull and run Container
+        env:
+          DB_NAME: ${{ secrets.DB_NAME }}
+          ACCESS_TOKEN_EXPIRE_MINUTES: ${{ secrets.ACCESS_TOKEN_EXPIRE_MINUTES }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          ALGORITHM: ${{ secrets.ALGORITHM }}
+        run: |
+          docker network create VoltCast_Network
+          
+          docker run -d --name api-gateway -p 22200:22200 \
+            -e "DB_NAME=$DB_NAME" \
+            -e "ACCESS_TOKEN_EXPIRE_MINUTES=$ACCESS_TOKEN_EXPIRE_MINUTES" \
+            -e "JWT_SECRET=$JWT_SECRET" \
+            -e "ALGORITHM=$ALGORITHM" \
+            ghcr.io/voltcast-a-ase-project/api-gateway-python/api-gateway:latest
+
+          docker run -d --name fronius-ms -p 8081:8081 \
+            -e MOCKING_ENABLED=true \
+            ghcr.io/voltcast-a-ase-project/fronius-microservice/fronius-ms:latest
+
+          docker run -d --name kostal-ms -p 8082:8082 \
+            ghcr.io/voltcast-a-ase-project/kostal-microservice/kostal-ms:latest
+
+          docker run -d --name shelly-ms -p 8083:8083 \
+            docker pull ghcr.io/voltcast-a-ase-project/shelly-microservice/shelly-ms:latest
+
+          docker run -d --name alerting-ms -p 8087:8087 \
+            docker pull ghcr.io/voltcast-a-ase-project/alerting_service/alert-ms:latest
+
+#          docker run -d --name forecasting-ms -p 8084:8084 \
+            #TODO: PUT YOUR DOCKER FILE HERE
+
+#          docker run -d --name newsfeed-ms -p 8085:8085 \
+            #TODO: PUT YOUR DOCKER FILE HERE
+
+#           docker run -d --name weatherservice-ms -p 8086:8086 \
+            #TODO: PUT YOUR DOCKER FILE HERE
+
+          docker network connect VoltCast_Network api-gateway
+
+          docker network connect VoltCast_Network fronius-ms
+          
+          docker network connect VoltCast_Network kostal-ms
+          
+          docker network connect VoltCast_Network shelly-ms
+          
+          docker network connect VoltCast_Network alerting-ms
+          
+#           docker network connect VoltCast_Network forecasting-ms
+          
+#           docker network connect VoltCast_Network newsfeed-ms
+          
+#           docker network connect VoltCast_Network weatherservice-ms
+
+      - name: Install Python, Java Runtime and Taurus
+        run: |
+          sudo apt-get update
+          sudo apt-get install python3 default-jre-headless python3-tk python3-dev libxml2-dev libxslt-dev zlib1g-dev net-tools
+          python -m venv .venv
+          source .venv/bin/activate
+          python -m pip install --upgrade pip
+          pip install bzt
+
+      - name: Run Acceptance Tests
+        run: |
+          source .venv/bin/activate
+          bzt acceptance_tests.jmx
+          
+
+    # Job runs performance tests
+  performance-test:
+    runs-on: ubuntu-latest
+    needs: acceptance-test
