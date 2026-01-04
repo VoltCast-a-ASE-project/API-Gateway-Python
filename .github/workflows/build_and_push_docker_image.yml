@@ -105,7 +105,3 @@ jobs:
         run: |
           source .venv/bin/activate
           bzt acceptance_tests.jmx
-
-      - name: Print docker logs
-        run: |
-          docker logs api-gateway
