@@ -58,14 +58,19 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Setup container
+        env:
+          DB_NAME: ${{ secrets.DB_NAME }}
+          ACCESS_TOKEN_EXPIRE_MINUTES: ${{ secrets.ACCESS_TOKEN_EXPIRE_MINUTES }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          ALGORITHM: ${{ secrets.ALGORITHM }}
         run: |
           docker network create VoltCast_Network
           
           docker run -d --name api-gateway -p 22200:22200 \
-            -e "DB_NAME=${{ secrets.DB_NAME }}" \
-            -e "ACCESS_TOKEN_EXPIRE_MINUTES=${{ secrets.ACCESS_TOKEN_EXPIRE_MINUTES }}" \
-            -e "JWT_SECRET=${{ secrets.JWT_SECRET }}" \
-            -e "ALGORITHM=${{ secrets.ALGORITHM }}" \
+            -e "DB_NAME=$DB_NAME" \
+            -e "ACCESS_TOKEN_EXPIRE_MINUTES=$ACCESS_TOKEN_EXPIRE_MINUTES" \
+            -e "JWT_SECRET=$JWT_SECRET" \
+            -e "ALGORITHM=$ALGORITHM" \
             ghcr.io/voltcast-a-ase-project/api-gateway-python/api-gateway:latest
 
           docker run -d --name fronius-ms -p 8081:8081 \
