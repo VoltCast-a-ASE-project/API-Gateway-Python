@@ -52,7 +52,7 @@ jobs:
 
   # Job runs acceptance tests
   acceptance-test:
-    name: Runs acceptance tests
+    name: Run acceptance tests
     runs-on: ubuntu-latest
     needs: build-and-push
     steps:
@@ -90,6 +90,8 @@ jobs:
           docker network connect VoltCast_Network shelly-ms
           
           docker network connect VoltCast_Network alerting-ms
+          
+          docker logs api-gateway
           
 
       - name: Install Python, Java Runtime and Taurus
