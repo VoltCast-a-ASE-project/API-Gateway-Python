@@ -52,12 +52,17 @@ jobs:
 
   # Job runs acceptance tests
   acceptance-test:
-    name: Runs acceptance tests
+    name: Run acceptance tests
     runs-on: ubuntu-latest
     needs: build-and-push
     steps:
       - uses: actions/checkout@v4
       - name: Setup container
+        env:
+          DB_NAME: ${{ secrets.DB_NAME }}
+          ACCESS_TOKEN_EXPIRE_MINUTES: ${{ secrets.ACCESS_TOKEN_EXPIRE_MINUTES }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          ALGORITHM: ${{ secrets.ALGORITHM }}
         run: |
           docker network create VoltCast_Network
           
