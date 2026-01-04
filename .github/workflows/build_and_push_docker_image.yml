@@ -61,13 +61,11 @@ jobs:
         run: |
           docker network create VoltCast_Network
           
-          docker pull ghcr.io/voltcast-a-ase-project/api-gateway-python/api-gateway:latest
-          
           docker run -d --name api-gateway -p 22200:22200 \
-            -e DB_NAME=${{ secrets.DB_NAME }} \
-            -e ACCESS_TOKEN_EXPIRE_MINUTES=${{ secrets.ACCESS_TOKEN_EXPIRE_MINUTES }} \
-            -e JWT_SECRET=${{ secrets.JWT_SECRET }} \
-            -e ALGORITHM=${{ secrets.ALGORITHM }} \
+            -e "DB_NAME=${{ secrets.DB_NAME }}" \
+            -e "ACCESS_TOKEN_EXPIRE_MINUTES=${{ secrets.ACCESS_TOKEN_EXPIRE_MINUTES }}" \
+            -e "JWT_SECRET=${{ secrets.JWT_SECRET }}" \
+            -e "ALGORITHM=${{ secrets.ALGORITHM }}" \
             ghcr.io/voltcast-a-ase-project/api-gateway-python/api-gateway:latest
 
           docker run -d --name fronius-ms -p 8081:8081 \
