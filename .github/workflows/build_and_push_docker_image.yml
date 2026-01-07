@@ -72,8 +72,10 @@ jobs:
           docker run -d --name shelly-ms -p 8083:8083 \
             ghcr.io/voltcast-a-ase-project/shelly-microservice/shelly-ms:latest
 
-          docker run -d --name alerting-ms -p 8087:8087 \
+          docker run -d --name alert-ms -p 8087:8087 \
             ghcr.io/voltcast-a-ase-project/alerting_service/alert-ms:latest
+          
+          docker ps
 
           docker network connect VoltCast_Network api-gateway
 
