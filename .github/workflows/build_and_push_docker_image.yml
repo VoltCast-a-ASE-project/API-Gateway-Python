@@ -60,12 +60,11 @@ jobs:
           
           docker compose -f ${{ env.COMPOSE_FILE }} down -v || true
           
-          docker run -d --name api-gateway -p 22200:22200 \
-            -e "DB_NAME=$DB_NAME" \
-            -e "ACCESS_TOKEN_EXPIRE_MINUTES=$ACCESS_TOKEN_EXPIRE_MINUTES" \
-            -e "JWT_SECRET=$JWT_SECRET" \
-            -e "ALGORITHM=$ALGORITHM" \
-            api-gateway
+          DB_NAME=$DB_NAME \
+          ACCESS_TOKEN_EXPIRE_MINUTES=$ACCESS_TOKEN_EXPIRE_MINUTES \
+          JWT_SECRET=$JWT_SECRET \
+          ALGORITHM=$ALGORITHM \
+          docker compose -f ${{ env.COMPOSE_FILE }} up -d --build --force-recreate api-gateway
 
           docker run -d --name fronius-ms -p 8081:8081 \
             -e MOCKING_ENABLED=true \
@@ -79,8 +78,6 @@ jobs:
 
           docker run -d --name alert-ms -p 8087:8087 \
             ghcr.io/voltcast-a-ase-project/alerting_service/alert-ms:latest
-
-          docker network connect VoltCast_Network api-gateway
 
           docker network connect VoltCast_Network fronius-ms
           
