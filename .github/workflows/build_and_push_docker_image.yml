@@ -65,7 +65,7 @@ jobs:
             -e "ACCESS_TOKEN_EXPIRE_MINUTES=$ACCESS_TOKEN_EXPIRE_MINUTES" \
             -e "JWT_SECRET=$JWT_SECRET" \
             -e "ALGORITHM=$ALGORITHM" \
-            api-gateway-python
+            api-gateway
 
           docker run -d --name fronius-ms -p 8081:8081 \
             -e MOCKING_ENABLED=true \
