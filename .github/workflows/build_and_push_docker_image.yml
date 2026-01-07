@@ -78,6 +78,12 @@ jobs:
 
           docker run -d --name alert-ms -p 8087:8087 \
             ghcr.io/voltcast-a-ase-project/alerting_service/alert-ms:latest
+          
+          docker run -d --name weatherservice-ms -p 8086:8086 \
+            ghcr.io/voltcast-a-ase-project/weatherservice-microservice/weatherservice-ms:latest
+          
+          docker run -d --name forecasting-ms -p 8084:8084 \
+            ghcr.io/voltcast-a-ase-project/forecasting_tool/forecasting-ms:latest
 
           docker network connect VoltCast_Network fronius-ms
           
@@ -86,6 +92,10 @@ jobs:
           docker network connect VoltCast_Network shelly-ms
           
           docker network connect VoltCast_Network alert-ms
+          
+          docker network connect VoltCast_Network weatherservice-ms
+          
+          docker network connect VoltCast_Network forecasting-ms 
           
       - name: Wait for API-Gateway
         run: |
