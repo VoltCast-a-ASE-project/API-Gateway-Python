@@ -8,6 +8,9 @@ from dotenv import load_dotenv
 
 
 class JwtService:
+    """
+    Class holds methods for JSON Web Token creation and validation.
+    """
 
     @staticmethod
     def create_jwt(username):
