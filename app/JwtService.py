@@ -1,16 +1,24 @@
 import datetime
 import os
-from datetime import timedelta, datetime, timezone
-
 import jwt
 
+from datetime import timedelta, datetime, timezone
 from dotenv import load_dotenv
 
 
+
 class JwtService:
+    """
+    Class holds methods for JSON Web Token creation and validation.
+    """
 
     @staticmethod
     def create_jwt(username):
+        """
+        Method creates a user specific JSON Web Token and returns it.
+        :param username: Username as string
+        :return: JWT as string
+        """
         load_dotenv()
         secret = os.getenv("JWT_SECRET")
         algorithm = os.getenv("ALGORITHM")
@@ -27,6 +35,9 @@ class JwtService:
 
     @staticmethod
     def verify_jwt(token) -> bool:
+        """
+        Method validates passed JSON Web Token. Returns boolean true or false
+        """
         load_dotenv()
         secret = os.getenv("JWT_SECRET")
         algorithm = os.getenv("ALGORITHM")

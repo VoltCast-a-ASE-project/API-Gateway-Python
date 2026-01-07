@@ -27,6 +27,12 @@ class DummyDB:
 
 
 def test_register_success(client, monkeypatch):
+    """
+    Test registration route.
+    :param client: User
+    :param monkeypatch: Generator
+    :return: None
+    """
     monkeypatch.setattr(main_module, "db", DummyDB())
     monkeypatch.setattr(main_module.PasswordService, "create_password_hash", lambda pw: "hashed_pw")
     monkeypatch.setattr(main_module.JwtService, "create_jwt", lambda username: "jwt_token")
@@ -41,6 +47,12 @@ def test_register_success(client, monkeypatch):
 
 
 def test_register_conflict_email_in_use(client, monkeypatch):
+    """
+    Test registration method with already in use username/email address
+    :param client: User
+    :param monkeypatch: Generator
+    :return: None
+    """
     db = DummyDB()
     db.write_user_data = lambda user: False
     monkeypatch.setattr(main_module, "db", db)
@@ -56,6 +68,12 @@ def test_register_conflict_email_in_use(client, monkeypatch):
 
 
 def test_login_success(client, monkeypatch):
+    """
+    Test login route.
+    :param client: User
+    :param monkeypatch: Generator
+    :return: None
+    """
     monkeypatch.setattr(main_module, "db", DummyDB())
     monkeypatch.setattr(main_module.PasswordService, "verify_password", lambda p, h: True)
     monkeypatch.setattr(main_module.JwtService, "create_jwt", lambda u: "jwt_token")
@@ -70,6 +88,12 @@ def test_login_success(client, monkeypatch):
 
 
 def test_login_wrong_credentials(client, monkeypatch):
+    """
+    Test login with invalid credentials.
+    :param client: User
+    :param monkeypatch: Generator
+    :return: None
+    """
     monkeypatch.setattr(main_module, "db", DummyDB())
     monkeypatch.setattr(main_module.PasswordService, "verify_password", lambda p, h: False)
 
@@ -82,6 +106,12 @@ def test_login_wrong_credentials(client, monkeypatch):
 
 
 def test_login_user_not_found(client, monkeypatch):
+    """
+    Test login with username not registered in database.
+    :param client: User
+    :param monkeypatch: Generator
+    :return: None
+    """
     db = DummyDB()
     db.get_user_password = lambda username: []
     monkeypatch.setattr(main_module, "db", db)
@@ -95,6 +125,12 @@ def test_login_user_not_found(client, monkeypatch):
 
 
 def test_excluded_routes_no_jwt_required(client, monkeypatch):
+    """
+    Test routes which are excluded from JWT middleware.
+    :param client: User
+    :param monkeypatch: Generator
+    :return: None
+    """
     monkeypatch.setattr(main_module, "db", DummyDB())
     monkeypatch.setattr(main_module.PasswordService, "create_password_hash", lambda pw: "hashed_pw")
     monkeypatch.setattr(main_module.JwtService, "create_jwt", lambda u: "jwt_token")
@@ -108,6 +144,12 @@ def test_excluded_routes_no_jwt_required(client, monkeypatch):
 
 
 def test_missing_authorization_header(client, monkeypatch):
+    """
+    Test any route with missing authorization header.
+    :param client: User
+    :param monkeypatch: Generator
+    :return: None
+    """
     monkeypatch.setattr(main_module.JwtService, "verify_jwt", lambda t: True)
 
     res = client.get("/api/v1/shelly/test")
@@ -116,6 +158,12 @@ def test_missing_authorization_header(client, monkeypatch):
 
 
 def test_invalid_token(client, monkeypatch):
+    """
+    Test middleware JWT validation with invalid JWT.
+    :param client: User
+    :param monkeypatch: Generator
+    :return: None
+    """
     monkeypatch.setattr(main_module.JwtService, "verify_jwt", lambda t: False)
 
     res = client.get(

@@ -9,18 +9,31 @@ from app.JwtService import JwtService
 
 @pytest.fixture(autouse=True)
 def jwt_env(monkeypatch):
+    """
+    Define environment variables.
+    :param monkeypatch: Generator
+    :return: None
+    """
     monkeypatch.setenv("JWT_SECRET", "test-secret")
     monkeypatch.setenv("ALGORITHM", "HS256")
     monkeypatch.setenv("ACCESS_TOKEN_EXPIRE_MINUTES", "1")
 
 
 def test_create_jwt_returns_string():
+    """
+    Test to create JWT
+    :return: None
+    """
     token = JwtService.create_jwt("user@test.com")
     assert isinstance(token, str)
     assert token.count(".") == 2
 
 
 def test_create_jwt_contains_correct_subject():
+    """
+    Test to create JWT with correct user.
+    :return: None
+    """
     token = JwtService.create_jwt("user@test.com")
 
     decoded = jwt.decode(
@@ -33,6 +46,10 @@ def test_create_jwt_contains_correct_subject():
 
 
 def test_create_jwt_has_expiration_in_future():
+    """
+    Test to create JWT with expiration date in the future.
+    :return: None
+    """
     token = JwtService.create_jwt("user@test.com")
 
     decoded = jwt.decode(
@@ -46,11 +63,19 @@ def test_create_jwt_has_expiration_in_future():
 
 
 def test_verify_jwt_valid_token_returns_true():
+    """
+    Test verification of a valid JWT.
+    :return: None
+    """
     token = JwtService.create_jwt("user@test.com")
     assert JwtService.verify_jwt(token) is True
 
 
 def test_verify_jwt_invalid_signature_returns_false():
+    """
+    Test verification of an invalid JWT.
+    :return: None
+    """
     token = JwtService.create_jwt("user@test.com")
 
     parts = token.split(".")
@@ -60,6 +85,11 @@ def test_verify_jwt_invalid_signature_returns_false():
 
 
 def test_verify_jwt_expired_token_returns_false(monkeypatch):
+    """
+    Test to verify expired JWT:
+    :param monkeypatch: Generator
+    :return: None
+    """
     monkeypatch.setenv("ACCESS_TOKEN_EXPIRE_MINUTES", "0")
 
     token = JwtService.create_jwt("user@test.com")
@@ -70,4 +100,8 @@ def test_verify_jwt_expired_token_returns_false(monkeypatch):
 
 
 def test_verify_jwt_random_string_returns_false():
+    """
+    Test JWT verification method with a random string.
+    :return:
+    """
     assert JwtService.verify_jwt("this.is.not.a.jwt") is False

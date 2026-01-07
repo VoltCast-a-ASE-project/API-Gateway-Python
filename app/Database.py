@@ -1,19 +1,30 @@
 import _sqlite3
+import os
+
 from sqlite3 import DatabaseError
+from dotenv import load_dotenv
 
 
 class Database:
+    """
+    Class holds method that perform queries on the SQLite database.
+    """
 
     @staticmethod
-    def establish_con(db_name):
-        return _sqlite3.connect("VoltCastDB")
+    def establish_con():
+        """
+        Method establishes connection to database and returns connection object.
+        """
+        load_dotenv()
+        db_name = os.getenv("DB_NAME")
+        return _sqlite3.connect(db_name)
 
     def setup_db(self):
         """
-        Called during Backend setup
-        :return:
+        Called during Backend setup. Creates all necessary tables.
+        :return: None
         """
-        con = self.establish_con("VoltCastDB")
+        con = self.establish_con()
         cur = con.cursor()
         cur.execute('''
                     CREATE TABLE IF NOT EXISTS user(
@@ -24,7 +35,12 @@ class Database:
         con.close()
 
     def write_user_data(self, user) -> bool:
-        con = self.establish_con("VoltCastDB")
+        """
+        Writes user data to database.
+        :param user: JSON with user data.
+        :return: boolean
+        """
+        con = self.establish_con()
         cur = con.cursor()
 
         try:
@@ -41,7 +57,12 @@ class Database:
 
 
     def get_user_password(self, username: str):
-        con = self.establish_con("VoltCastDB")
+        """
+        Method returns user password hash.
+        :param username: String username
+        :return: Database tuple with user password hash.
+        """
+        con = self.establish_con()
         cur = con.cursor()
         print(username)
 
