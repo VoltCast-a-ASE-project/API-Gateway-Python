@@ -12,7 +12,7 @@ env:
 jobs:
   # Job builds docker image and pushes it to GHCR
   build-and-push:
-    name: Builddocker image
+    name: Build docker image
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -67,7 +67,7 @@ jobs:
           
           docker compose -f ${{ env.COMPOSE_FILE }} down -v || true
           
-          DB_NAME=$DB_NAME,ACCESS_TOKEN_EXPIRE_MINUTES=$ACCESS_TOKEN_EXPIRE_MINUTES,JWT_SECRET=$JWT_SECRET,ALGORITHM=$ALGORITHM docker compose -f ${{ env.COMPOSE_FILE }} up -d -p 22200:22200 --build --force-recreate api-gateway
+          DB_NAME=$DB_NAME,ACCESS_TOKEN_EXPIRE_MINUTES=$ACCESS_TOKEN_EXPIRE_MINUTES,JWT_SECRET=$JWT_SECRET,ALGORITHM=$ALGORITHM docker compose -f ${{ env.COMPOSE_FILE }} up -d --port 22200:22200 --build --force-recreate api-gateway
 
           docker run -d --name fronius-ms -p 8081:8081 \
             -e MOCKING_ENABLED=true \
