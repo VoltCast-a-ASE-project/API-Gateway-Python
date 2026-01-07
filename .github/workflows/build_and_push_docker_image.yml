@@ -77,7 +77,7 @@ jobs:
           
           docker ps
 
-          docker network connect VoltCast_Network api-gateway
+          docker network connect VoltCast_Network api-gateway-python-api-gateway-1
 
           docker network connect VoltCast_Network fronius-ms
           
