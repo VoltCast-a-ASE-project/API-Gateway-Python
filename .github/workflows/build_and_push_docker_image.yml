@@ -74,10 +74,6 @@ jobs:
 
           docker run -d --name alert-ms -p 8087:8087 \
             ghcr.io/voltcast-a-ase-project/alerting_service/alert-ms:latest
-          
-          docker ps
-
-
 
           docker network connect VoltCast_Network fronius-ms
           
