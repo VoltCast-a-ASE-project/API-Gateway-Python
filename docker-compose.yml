@@ -9,10 +9,10 @@ services:
     expose:
       - "22200"
     environment:
-      DB_NAME: ""
-      ACCESS_TOKEN_EXPIRE_MINUTES: 0
-      JWT_SECRET: ""
-      ALGORITHM: ""
+      - DB_NAME=${DB_NAME}
+      - ACCESS_TOKEN_EXPIRE_MINUTES=${ACCESS_TOKEN_EXPIRE_MINUTES}
+      - JWT_SECRET=${JWT_SECRET}
+      - ALGORITHM=${ALGORITHM}
 
 networks:
   VoltCast_Network:
