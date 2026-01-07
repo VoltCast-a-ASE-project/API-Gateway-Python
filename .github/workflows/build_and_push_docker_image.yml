@@ -138,9 +138,9 @@ jobs:
             exit 1
           fi
           
-          - name: Stop test containers
-            if: always()
-            run: docker compose -f ${{ env.COMPOSE_FILE }} down -v
+      - name: Stop test containers
+        if: always()
+        run: docker compose -f ${{ env.COMPOSE_FILE }} down -v
           
 
   push-docker-image:
