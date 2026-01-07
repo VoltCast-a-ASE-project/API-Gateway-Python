@@ -85,7 +85,7 @@ jobs:
           
           docker network connect VoltCast_Network shelly-ms
           
-          docker network connect VoltCast_Network alerting-ms
+          docker network connect VoltCast_Network alert-ms
           
       - name: Wait for API-Gateway
         run: |
