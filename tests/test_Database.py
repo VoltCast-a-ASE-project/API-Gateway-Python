@@ -25,7 +25,12 @@ def db_instance(tmp_path, monkeypatch):
 
 
 def test_setup_db_creates_tables(db_instance):
-    con = db_instance.establish_con("VoltCastDB")
+    """
+    Test creation of database.
+    :param db_instance: Mocking instance of database.
+    :return: None
+    """
+    con = db_instance.establish_con()
     cur = con.cursor()
 
     cur.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='user'")
@@ -35,6 +40,11 @@ def test_setup_db_creates_tables(db_instance):
 
 
 def test_write_user_data_success(db_instance):
+    """
+    Test write user data to database.
+    :param db_instance: Mocking instance of database.
+    :return: None
+    """
     u = DummyUser("a@b.com", "hashed")
     assert db_instance.write_user_data(u) is True
 
@@ -43,6 +53,11 @@ def test_write_user_data_success(db_instance):
 
 
 def test_write_user_data_duplicate_username_returns_false(db_instance):
+    """
+    Test to write two times same username to database.
+    Mocking instance of database.
+    :return: None
+    """
     u1 = DummyUser("dup@b.com", "hashed1")
     assert db_instance.write_user_data(u1) is True
 
@@ -51,5 +66,10 @@ def test_write_user_data_duplicate_username_returns_false(db_instance):
 
 
 def test_get_user_password_unknown_user_returns_empty_list(db_instance):
+    """
+    Test to return no password for unexistant user.
+    :param db_instance: Mocking instance of database.
+    :return: None
+    """
     res = db_instance.get_user_password("missing@b.com")
     assert res == []
