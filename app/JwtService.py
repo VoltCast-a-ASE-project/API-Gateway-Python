@@ -1,10 +1,10 @@
 import datetime
 import os
-from datetime import timedelta, datetime, timezone
-
 import jwt
 
+from datetime import timedelta, datetime, timezone
 from dotenv import load_dotenv
+
 
 
 class JwtService:
