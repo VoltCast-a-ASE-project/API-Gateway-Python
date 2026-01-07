@@ -64,7 +64,6 @@ jobs:
           ACCESS_TOKEN_EXPIRE_MINUTES=$ACCESS_TOKEN_EXPIRE_MINUTES \
           JWT_SECRET=$JWT_SECRET \
           ALGORITHM=$ALGORITHM \
-          
           docker compose -f ${{ env.COMPOSE_FILE }} up -d --build --force-recreate api-gateway
 
           docker run -d --name fronius-ms -p 8081:8081 \
