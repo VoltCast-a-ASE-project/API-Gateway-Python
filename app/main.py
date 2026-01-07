@@ -40,11 +40,21 @@ EXCLUDED_ROUTES = ["/api/v1/auth/register", "/api/v1/auth/login"]
 
 @app.on_event("startup")
 def setup():
+    """
+    Method gets executed when microservice starts, create DB if non exsitant, starts data collection.
+    """
     db.setup_db()
 
 
 @app.middleware("http")
 async def check_jwt(request: Request, call_next):
+    """
+    Middleware that checks validity of JSON Web Token passed in the authorization header of any request, except log in
+    and register.
+    :param request: Incoming request.
+    :param call_next: Calls requested route if JWT validated.
+    :return: Response from requested route.
+    """
 
     if request.method == "OPTIONS":
         return await call_next(request)
@@ -69,6 +79,11 @@ async def check_jwt(request: Request, call_next):
 
 @app.post("/api/v1/auth/register")
 async def register(request: Request):
+    """
+    Rout calls methods for registration and returns valid JWT.
+    :param request:
+    :return:
+    """
     body =  await request.json()
 
     username = body["email"]
@@ -93,6 +108,11 @@ async def register(request: Request):
 
 @app.post("/api/v1/auth/login")
 async def login(request: Request):
+    """
+    Rout calls methods for login and after successful credential validation returns valid JWT.
+    :param request:
+    :return:
+    """
     body =  await request.json()
 
     username = body["email"]
@@ -120,6 +140,13 @@ async def login(request: Request):
 
 @app.api_route("/api/v1/{vendor}/{path:path}", methods=["GET", "POST", "PUT", "DELETE", "PATCH"])
 async def route(vendor: str, path: str, request: Request):
+    """
+    Route forwards requests to microservices and responses from microservices to requesters.
+    :param vendor: Name of the microservice
+    :param path: Requested path from the microservice
+    :param request: Request to the microservice
+    :return: Response from the microservice
+    """
     target = ROUTES.get(vendor)
     if not target:
         return Response("Unknown target", status_code=404)
