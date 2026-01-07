@@ -60,7 +60,7 @@ jobs:
           
           docker compose -f ${{ env.COMPOSE_FILE }} down -v || true
           
-          docker compose -f ${{ env.COMPOSE_FILE }} up -d --env DB_NAME=$DB_NAME ACCESS_TOKEN_EXPIRE_MINUTES=$ACCESS_TOKEN_EXPIRE_MINUTES JWT_SECRET=$JWT_SECRET ALGORITHM=$ALGORITHM --build --force-recreate api-gateway
+          docker compose -f ${{ env.COMPOSE_FILE }} up -d -e DB_NAME=$DB_NAME ACCESS_TOKEN_EXPIRE_MINUTES=$ACCESS_TOKEN_EXPIRE_MINUTES JWT_SECRET=$JWT_SECRET ALGORITHM=$ALGORITHM --build --force-recreate api-gateway
 
           docker run -d --name fronius-ms -p 8081:8081 \
             -e MOCKING_ENABLED=true \
