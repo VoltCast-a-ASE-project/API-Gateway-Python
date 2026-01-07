@@ -133,7 +133,7 @@ jobs:
           ' artifacts_acceptance/kpi.jtl)
           THRESHOLD=10
           echo "Error rate: $ERROR_RATE %"
-          if (( $(echo "$ERROR_RATE > THRESHOLD" | bc -l) )); then
+          if (( $(echo "$ERROR_RATE > $THRESHOLD" | bc -l) )); then
             echo "Error rate too high, failing the job!"
             exit 1
           fi
