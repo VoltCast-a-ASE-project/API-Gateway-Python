@@ -114,7 +114,7 @@ jobs:
           ART_DIR="$PWD/artifacts_acceptance"
           echo "Artifacts dir: $ART_DIR"
           mkdir -p "$ART_DIR"
-          bzt acceptance_tests.jmx -o settings.artifacts-dir="$ART_DIR" -o modules.console.disable=true -l "$ART_DIR/bzt.log" || true,
+          bzt acceptance_tests.jmx -o settings.artifacts-dir="$ART_DIR" -o modules.console.disable=true -l "$ART_DIR/bzt.log" || true
 
       - name: Check JMeter/Taurus results
         run: |
