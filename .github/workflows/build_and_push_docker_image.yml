@@ -100,7 +100,7 @@ jobs:
           
           docker network connect VoltCast_Network forecasting-ms 
           
-          docker network connect VoltCast_Network newsfeed-ms≤
+          docker network connect VoltCast_Network newsfeed-ms
           
       - name: Wait for API-Gateway
         run: |
