@@ -20,9 +20,9 @@ ROUTES = {
     "fronius": "http://fronius-ms:8081",
     "kostal": "http://kostal-ms:8082",
     "shelly": "http://shelly-ms:8083",
-    "forecasting": "http://forecasting-ms:8084",
+    "forecast": "http://forecasting-ms:8084",
     "newsfeed": "http://newsfeed-ms:8085",
-    "weatherservice": "http://weatherservice-ms:8086",
+    "weather": "http://weatherservice-ms:8086",
     "alert": "http://alert-ms:8087"
 }
 origins = [
